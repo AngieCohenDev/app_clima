@@ -1,53 +1,49 @@
-require('dotenv').config()
+require("dotenv").config();
 
-const {  inquirerMenu, pausa, leerImput, listarLugares } = require("./helpers/inquirer");
-const Busquedas = require('./models/busquedad');
+const {
+  inquirerMenu,
+  pausa,
+  leerImput,
+  listarLugares,
+} = require("./helpers/inquirer");
+const Busquedas = require("./models/busquedad");
 
+const main = async () => {
+  const busquedas = new Busquedas();
+  let opt;
 
+  do {
+    opt = await inquirerMenu();
 
+    switch (opt) {
+      case 1:
+        //Mostrar mensaje
+        const termino = await leerImput("Ciudad: ");
 
+        //Bucar Lugar
+        const lugares = await busquedas.ciudad(termino);
 
-const main = async() =>{
-     const busquedas = new Busquedas();
-    let opt;
-
-   do {
-    
-        opt = await inquirerMenu();
+        //Seleccionar el lugar
+        const idSelc = await listarLugares(lugares);
+        const lugarSel = lugares.find((l) => l.id === idSelc);
         
-        switch (opt) {
-          case 1:
-               //Mostrar mensaje
-               const termino = await leerImput('Ciudad: ');
-               await busquedas.ciudad(termino);
 
-               //Bucar Lugar
-              
+        //Clima
 
-               //Seleccionar el lugar
-          
-               
-               //Clima
-              
+        //Mostrar resultados
+        console.log("  Informacionde la ciudad".yellow);
+        console.log("Ciudad:", lugarSel.nombre);
+        console.log("Lat:", lugarSel.lat);
+        console.log("Lng:", lugarSel.lng);
+        console.log("Temperatura:");
+        console.log("Maxima:");
+        console.log("Minima:");
 
+        break;
+    }
 
-               //Mostrar resultados
-               console.log('  Informacionde la ciudad'.yellow);
-               console.log('Ciudad:', );
-               console.log('Lat:', );
-               console.log('Lng:', );
-               console.log('Temperatura:', );
-               console.log('Maxima:', );
-               console.log('Minima:', );
-              
-          break;
-        
-          
-        }
-
-        if( opt !== 0) await pausa();
-
-   } while (opt !== 0);
-}
+    if (opt !== 0) await pausa();
+  } while (opt !== 0);
+};
 
 main();
