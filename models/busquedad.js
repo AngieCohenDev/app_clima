@@ -12,6 +12,17 @@ class Busquedas {
     this.leerDb();
   }
 
+  get historialCapitalizado() {
+    return this.historial.map( lugar => {
+
+        let palabras = lugar.split(' ');
+        palabras = palabras.map( p => p[0].toUpperCase() + p.substring(1) );
+
+        return palabras.join(' ')
+
+    })
+}
+
   get paramsMapbox() {
     return {
       language: "es",
@@ -80,6 +91,8 @@ class Busquedas {
     if(this.historial.includes(lugar.toLocaleLowerCase())){
       return;
     }
+
+    this.historial = this.historial.splice(0,5);
     this.historial.unshift(lugar)
 
     this.guardarDB();
@@ -94,7 +107,14 @@ class Busquedas {
     fs.writeFileSync(this.dbPath, JSON.stringify(payload));
   }
 
-  leerDb(){}
+  leerDb(){
+    if (!fs.existsSync(this.dbPath)) return;
+
+    const info = fs.readFileSync(this.dbPath,{encoding: 'utf-8'});
+    const data = JSON.parse(info);
+
+    this.historial = data.historial;
+  }
 
 }
 module.exports = Busquedas;
