@@ -65,14 +65,16 @@ const leerImput = async (message) => {
   return desc;
 };
 
-const listarLugares = async (lugares = []) => {
-  const choices = lugares.map((lugar, i) => {
-    const idx = `${i + 1}.`.green;
+const listarLugares = async( lugares = [] ) => {
 
-    return {
-      value: lugar.id,
-      name: `${idx} ${lugar.nombre}`,
-    };
+  const choices = lugares.map( (lugar, i) => {
+
+      const idx = `${i + 1}.`.green;
+
+      return {
+          value: lugar.id,
+          name:  `${ idx } ${ lugar.nombre }`
+      }
   });
 
   choices.unshift({
