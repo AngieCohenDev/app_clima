@@ -16,33 +16,45 @@ const main = async () => {
     opt = await inquirerMenu();
 
     switch (opt) {
-      case 1:
-        //Mostrar mensaje
-        const termino = await leerImput("Ciudad: ");
+          case 1:
+               //Mostrar mensaje
+               const termino = await leerImput("Ciudad: ");
 
-        //Bucar Lugar
-        const lugares = await busquedas.ciudad(termino);
+               //Bucar Lugar
+               const lugares = await busquedas.ciudad(termino);
 
-        //Seleccionar el lugar
-        const idSelc = await listarLugares(lugares);
-        const lugarSel = lugares.find((l) => l.id === idSelc);
-        
-        //Clima
+               //Seleccionar el lugar
+               const idSelc = await listarLugares(lugares);
+               if (idSelc === '0') continue;
+               const lugarSel = lugares.find((l) => l.id === idSelc);
 
-        const clima = await busquedas.climaLugar(lugarSel.lat, listarLugares.lon);
-        console.log(clima);
+               // Guardar en DB
+               busquedas.agregarHistorial(lugarSel.nombre)
+               
 
-        //Mostrar resultados
-        console.log("  Informacionde la ciudad".yellow);
-        console.log("Ciudad:", lugarSel.nombre);
-        console.log("Lat:", lugarSel.lat);
-        console.log("Lon:", lugarSel.lon);
-        console.log("Temperatura:");
-        console.log("Maxima:");
-        console.log("Minima:");
-        console.log("Como esdta el clima:");
+               //Clima
+               const clima = await busquedas.climaLugar(lugarSel.lat, listarLugares.lon);
+          
 
-        break;
+               //Mostrar resultados
+               console.clear();
+               console.log("  Informacionde la ciudad".yellow);
+               console.log("Ciudad:", lugarSel.nombre.green);
+               console.log("Lat:", lugarSel.lat);
+               console.log("Lon:", lugarSel.lon);
+               console.log("Temperatura:", clima.temp);
+               console.log("Maxima:", clima.max);
+               console.log("Minima:", clima.min);
+               console.log("Como esta el clima:", clima.desc);
+
+          break;
+
+          case 2:
+               busquedas.historial.forEach((lugar, i)=>{
+                    const idx = `${i + 0}.`.green
+                    console.log((`${idx} ${lugar}`));
+               })
+          break  
     }
 
     if (opt !== 0) await pausa();

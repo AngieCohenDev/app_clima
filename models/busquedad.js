@@ -4,7 +4,13 @@ const axios = require("axios");
 
 
 class Busquedas {
-  constructor() {}
+  
+  historial = [];
+  dbPath = './db/database.json';
+
+  constructor() {
+    this.leerDb();
+  }
 
   get paramsMapbox() {
     return {
@@ -56,18 +62,39 @@ class Busquedas {
       })
 
       const resp = await intance.get();
-      console.log(resp);
+      const {weather, main} = resp.data;
 
       return{
-        desc: '',
-        min: '',
-        max: '',
-        temp:'',
+        desc: weather[0].description,
+        min: main.temp_min,
+        max: main.temp_max,
+        temp:main.temp,
       }
       
     } catch (error) {
       console.log(error);
     }
   }
+
+  agregarHistorial(lugar = ''){
+    if(this.historial.includes(lugar.toLocaleLowerCase())){
+      return;
+    }
+    this.historial.unshift(lugar)
+
+    this.guardarDB();
+  }
+
+  guardarDB(){
+
+    const payload = {
+      historial: this.historial
+    };
+
+    fs.writeFileSync(this.dbPath, JSON.stringify(payload));
+  }
+
+  leerDb(){}
+
 }
 module.exports = Busquedas;
