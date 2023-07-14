@@ -2,6 +2,7 @@ const fs = require("fs");
 
 const axios = require("axios");
 
+
 class Busquedas {
   constructor() {}
 
@@ -11,6 +12,16 @@ class Busquedas {
       access_token: process.env.MAPBOX_KEY,
       limit: 5,
     };
+  }
+
+  get paramsWeather(){
+    return{
+      appid: process.env.OPENWEATHER_KEY,
+      units: 'metric',
+      lang: 'es',
+      lat: '10.96854',
+      lon: '-74.78132'
+    }
   }
 
   async ciudad(lugar = "") {
@@ -26,14 +37,36 @@ class Busquedas {
       return resp.data.features.map( lugar =>({
         id: lugar.id,
         nombre: lugar.place_name,
-        lng: lugar.center[0],
-        lat: lugar.center[1],
+        lat: lugar.center[0],
+        lon: lugar.center[1],
       }))
 
-      
     } catch (error) {
       console.log("No se encontro nada");
       return [];
+    }
+  }
+
+  async climaLugar(){
+    try {
+
+      const intance =  axios.create({
+        baseURL: `https://api.openweathermap.org/data/2.5/weather?`,
+        params: this.paramsWeather
+      })
+
+      const resp = await intance.get();
+      console.log(resp);
+
+      return{
+        desc: '',
+        min: '',
+        max: '',
+        temp:'',
+      }
+      
+    } catch (error) {
+      console.log(error);
     }
   }
 }
